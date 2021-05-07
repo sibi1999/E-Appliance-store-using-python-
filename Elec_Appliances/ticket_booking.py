@@ -1,4 +1,20 @@
 import sys
+import mysql.connector
+
+mydb = mysql.connector.connect(
+  host="localhost",
+  user="root",
+  password="12345sibi",
+  database="eapp"
+)
+
+mycursor = mydb.cursor()
+
+#mycursor.execute("select * from customer_table")
+#for x in mycursor:
+ # print(x)
+
+  
 sys.path.append(r'C:\Users\JARVIS\Desktop\mini_project_1\Elec_Appliances')
 
 from datetime import date
@@ -116,6 +132,14 @@ class ticket_booking():
         print()
         self.confirmed_ticket={'name':[user_data[0]],'product':[user_data[2]],'price':[user_data[1]],'region':[user_data[4]],'quantity':[user_data[3]],'date':[date.today()]}
         print("Thank You")
+        final_tuple=(user_data[0],user_data[2],user_data[1],user_data[4],user_data[3],date.today())
+        mycursor = mydb.cursor()
+
+        sql = "INSERT INTO customer_table (name, product,price,region,quatity,date) VALUES (%s,%s,%s,%s,%s,%s)"
+        val = final_tuple
+        mycursor.execute(sql, val)
+
+        mydb.commit()
         print()
 
    
@@ -149,6 +173,12 @@ class ticket_booking():
             #a_file=open("data.csv","w")
             df.to_csv(r'C:\Users\JARVIS\Desktop\mini_project_1\Elec_Appliances\data.csv',index=False)
 
+            print("\n")
+            
+            mycursor.execute("select * from customer_table")
+            for x in mycursor:
+                print(x)
+
             print("Do You want to continue?? 1 for Yes 0 for NO\n")
             x=int(input())
             if not x:
@@ -164,7 +194,7 @@ class ticket_booking():
             print(self.uname)
             print(confirmed_ticket[self.uname])
 
-#t=ticket_booking("suresh","123")
+#t=ticket_booking("kamal hassan","123")
 #t.create_ticket()
 
 

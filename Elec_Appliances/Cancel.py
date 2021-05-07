@@ -5,12 +5,35 @@ import smtplib
 import pandas as pd
 
 
+import mysql.connector
+
+mydb = mysql.connector.connect(
+  host="localhost",
+  user="root",
+  password="12345sibi",
+  database="eapp"
+)
+confirmed_ticket=[]
+mycursor = mydb.cursor()
+
+#mycursor.execute("select * from customer_table")
+
+#for i in mycursor:
+    #print(i)
+
+mycursor.execute("select name from customer_table")
+
+for i in mycursor:
+    confirmed_ticket.append(i[0])
+print(confirmed_ticket)
+
 #a_file=open('data.json',"r")
 #output=json.load(a_file)
 #print(output.keys())
 #a_file.close()
-df = pd.read_csv('data.csv')
-confirmed_ticket=pd.DataFrame(df)
+
+#df = pd.read_csv('data.csv')
+#confirmed_ticket=pd.DataFrame(df)
 #print(confirmed_ticket['name'])
 
 #print(confirmed_ticket)
@@ -35,10 +58,10 @@ class Cancel_Ticket():
         #print(output.keys())
     
         print("hi")
-        if self.uname in confirmed_ticket['name']:
+        if self.uname in confirmed_ticket:
             #data.drop(data.index[data['names'] == 'tom'])
-            n=data[data.index[data['names']== self.uname]]
-            print(n)
+            #n=data[data.index[data['names']== self.uname]]
+            #print(n)
             print("otp sent")
             otp=self.generateotp()
             sender = 'assignment681@gmail.com'
@@ -55,18 +78,27 @@ class Cancel_Ticket():
             #print(confirmed_ticket[uname].get('no_of_tickets'))
             if(otp==check):
                 
-                confirmed_ticket.pop(self.uname)
+                confirmed_ticket.remove(self.uname)
+                sql = "DELETE FROM customer_table WHERE name = %s"
+                name = (self.uname, )
+                mycursor.execute(sql,name)
+
+                mydb.commit()
                 print("Ticket Cancelled Sucessfully")
+
+                mycursor.execute("select * from customer_table")
+                for x in mycursor:
+                    print(x)
                 pass
         
-        a_file=open("data.json","w")
-        json.dump(confirmed_ticket,a_file)
-        a_file.close()
+        #a_file=open("data.json","w")
+        #json.dump(confirmed_ticket,a_file)
+        #a_file.close()
 
 
 
-c=Cancel_Ticket("raju","123")
-c.cancel_ticket()
+#c=Cancel_Ticket("raju","123")
+#c.cancel_ticket()
 
 
 
