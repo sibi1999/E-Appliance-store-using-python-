@@ -1,5 +1,7 @@
 import sys
 import mysql.connector
+import smtplib
+import smtplib
 
 mydb = mysql.connector.connect(
   host="localhost",
@@ -68,7 +70,7 @@ class ticket_booking():
 
             if (n==1):
                 i=ironbox()
-                i.details()
+                p_id=i.details()
                 
                 
                 
@@ -90,7 +92,7 @@ class ticket_booking():
                     print("Added To cart")
             elif(n==2):
                 e=Electric_heater()
-                e.details()
+                p_id=e.details()
                 print("\n Please enter the colour You want ")
                 print("\n The Colours we have are ")
                 print("\t1.red \t2.blue")
@@ -114,7 +116,7 @@ class ticket_booking():
                 #cart.append("Heater")
             else:
                 c=Charger()
-                c.details()
+                p_id=c.details()
                 p+=50
                 #cart.append("Charger")
             #print("Do You want to continue?? 1 for Yes 0 for NO\n")
@@ -123,7 +125,10 @@ class ticket_booking():
                 #break
             
                 
-            self.confirmation(p*no,cart,no,region)
+            if(self.confirmation(p*no,cart,no,region,p_id)):
+                continue
+            else:
+                return 0
         
         
     def ticket_print(self,user_data):
@@ -132,10 +137,10 @@ class ticket_booking():
         print()
         self.confirmed_ticket={'name':[user_data[0]],'product':[user_data[2]],'price':[user_data[1]],'region':[user_data[4]],'quantity':[user_data[3]],'date':[date.today()]}
         print("Thank You")
-        final_tuple=(user_data[0],user_data[2],user_data[1],user_data[4],user_data[3],date.today())
+        final_tuple=(user_data[0],user_data[2],user_data[1],user_data[4],user_data[3],date.today(),user_data[5])
         mycursor = mydb.cursor()
 
-        sql = "INSERT INTO customer_table (name, product,price,region,quatity,date) VALUES (%s,%s,%s,%s,%s,%s)"
+        sql = "INSERT INTO customer_table (name, product,price,region,quatity,date,product_id) VALUES (%s,%s,%s,%s,%s,%s,%s)"
         val = final_tuple
         mycursor.execute(sql, val)
 
@@ -146,9 +151,9 @@ class ticket_booking():
 
    
 
-    def confirmation(self,price,cart,no,region):
+    def confirmation(self,price,cart,no,region,p_id):
             print("R u sure to proceed with payment of rupees",price)
-            user_data=(self.uname,price,cart,no,region,date.today())
+            user_data=(self.uname,price,cart,no,region,p_id)
             print("Final Confirmation y or n")
             check=input().strip()
             if(check=='y'):
@@ -175,14 +180,25 @@ class ticket_booking():
 
             print("\n")
             
-            mycursor.execute("select * from customer_table")
-            for x in mycursor:
-                print(x)
+            #mycursor.execute("select * from customer_table")
+            #for x in mycursor:
+                #print(x)
 
-            print("Do You want to continue?? 1 for Yes 0 for NO\n")
+            sender = 'assignment681@gmail.com'
+            rec = 'assignmentuser597@gmail.com'
+            password = 'assignment681!_'
+            server = smtplib.SMTP('smtp.gmail.com', 587)
+            server.starttls()
+            server.login(sender, password)
+            msg="Your order has been placed "+user_data[0]
+            server.sendmail(sender, rec,msg)
+
+            print("Do You want to continue shopping ?? 1 for Yes 0 for NO\n")
             x=int(input())
-            if not x:
-                exit()
+            if x==0:
+                return None
+            else:
+                return 1
             
             #a_file.close()
             

@@ -28,6 +28,7 @@ class ironbox(product):
 
     def details(self):
         print("\n The price of the iron box is 100")
+        return 1
     def colour_code(self):
         print("colour Ok")
     def check_availability(self,n):
@@ -50,6 +51,7 @@ class Electric_heater(product):
     
     def details(self):
         print("\n The price of the heater is 200")
+        return 2
     def colour_code(self):
         print("colour Ok")
     def check_availability(self,n):
@@ -70,6 +72,7 @@ class Charger(product):
     
     def details(self):
         print("\n The price of the charger is 50")
+        return 3
     def colour_code(self):
         print("colour Ok")
     def check_availability(self,n):

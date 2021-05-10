@@ -23,9 +23,7 @@ mycursor = mydb.cursor()
 
 mycursor.execute("select name from customer_table")
 
-for i in mycursor:
-    confirmed_ticket.append(i[0])
-print(confirmed_ticket)
+confirmed_ticket=mycursor.fetchall()
 
 #a_file=open('data.json',"r")
 #output=json.load(a_file)
@@ -58,7 +56,7 @@ class Cancel_Ticket():
         #print(output.keys())
     
         print("hi")
-        if self.uname in confirmed_ticket:
+        if (self.uname,) in confirmed_ticket:
             #data.drop(data.index[data['names'] == 'tom'])
             #n=data[data.index[data['names']== self.uname]]
             #print(n)
@@ -78,9 +76,9 @@ class Cancel_Ticket():
             #print(confirmed_ticket[uname].get('no_of_tickets'))
             if(otp==check):
                 
-                confirmed_ticket.remove(self.uname)
+                #confirmed_ticket.remove(self.uname)
                 sql = "DELETE FROM customer_table WHERE name = %s"
-                name = (self.uname, )
+                name = (self.uname,)
                 mycursor.execute(sql,name)
 
                 mydb.commit()
